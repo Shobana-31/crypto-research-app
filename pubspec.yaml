@@ -1,0 +1,37 @@
+name: crypto_research_app
+description: A crypto market research app
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.6
+  provider: ^6.0.5
+  fl_chart: ^0.63.0
+  intl: ^0.18.1
+  shared_preferences: ^2.2.2
+  pull_to_refresh: ^2.0.0
+  http: ^1.1.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.1
+  flutter_native_splash: ^2.3.0
+  flutter_launcher_icons: ^0.13.1 
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/logo.png"
+  adaptive_icon_background: "#1A1A2E"
+  adaptive_icon_foreground: "assets/logo.png"
