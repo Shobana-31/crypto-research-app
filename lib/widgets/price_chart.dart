@@ -5,9 +5,8 @@ import '../providers/crypto_provider.dart';
 
 class PriceChart extends StatefulWidget {
   final String coinId;
-  final String days;
 
-  const PriceChart({super.key, required this.coinId, required this.days});
+  const PriceChart({super.key, required this.coinId});
 
   @override
   State<PriceChart> createState() => _PriceChartState();
@@ -18,28 +17,19 @@ class _PriceChartState extends State<PriceChart> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<CryptoProvider>().fetchCoinChart(widget.coinId, widget.days);
+      context.read<CryptoProvider>().fetchCoinChart(widget.coinId);
     });
-  }
-
-  @override
-  void didUpdateWidget(PriceChart oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.days != widget.days) {
-      context.read<CryptoProvider>().fetchCoinChart(widget.coinId, widget.days);
-    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Consumer<CryptoProvider>(
       builder: (context, provider, child) {
-        if (provider.isLoading) {
+        if (provider.isChartLoading) {
           return const Center(child: CircularProgressIndicator());
         }
 
         final chartData = provider.chartData;
-
         if (chartData == null || chartData.isEmpty) {
           return const Center(
             child: Text(
@@ -63,7 +53,7 @@ class _PriceChartState extends State<PriceChart> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      '${widget.days} Day Performance',
+                      '7 Day Performance',
                       style: TextStyle(color: Colors.grey[600], fontSize: 12),
                     ),
                     Text(
@@ -86,8 +76,8 @@ class _PriceChartState extends State<PriceChart> {
             Expanded(
               child: LineChart(
                 LineChartData(
-                  gridData: FlGridData(show: false),
-                  titlesData: FlTitlesData(show: false),
+                  gridData: const FlGridData(show: false),
+                  titlesData: const FlTitlesData(show: false),
                   borderData: FlBorderData(show: false),
                   lineBarsData: [
                     LineChartBarData(
@@ -100,8 +90,8 @@ class _PriceChartState extends State<PriceChart> {
                       }).toList(),
                       isCurved: true,
                       color: isPositive ? Colors.green : Colors.red,
-                      barWidth: 3,
-                      dotData: FlDotData(show: false),
+                      barWidth: 2,
+                      dotData: const FlDotData(show: false),
                       belowBarData: BarAreaData(
                         show: true,
                         color: (isPositive ? Colors.green : Colors.red)
@@ -114,6 +104,7 @@ class _PriceChartState extends State<PriceChart> {
                   minY: 0,
                   maxY: 1,
                 ),
+                duration: Duration.zero,
               ),
             ),
           ],

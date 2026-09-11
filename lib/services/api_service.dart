@@ -41,12 +41,12 @@ class ApiService {
     }
   }
 
-  Future<PriceHistory> getCoinChart(String coinId, {String days = '7'}) async {
+  Future<PriceHistory> getCoinChart(String coinId) async {
     try {
       final response = await http.get(
-        Uri.parse('$baseUrl/coins/$coinId/chart?days=$days'),
+        Uri.parse('$baseUrl/coins/$coinId/chart'),
         headers: {'Content-Type': 'application/json'},
-      );
+      ).timeout(const Duration(seconds: 30));
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);

@@ -10,7 +10,12 @@ class CryptoProvider extends ChangeNotifier {
   CoinDetail? _selectedCoin;
   List<double>? _chartData;
   Map<String, dynamic> _globalData = {};
-  bool _isLoading = false;
+
+  bool _isLoadingCoins = false;
+  bool _isLoadingDetail = false;
+  bool _isLoadingChart = false;
+  bool _isLoadingGlobal = false;
+
   String? _error;
   String _sortOrder = 'market_cap_desc';
 
@@ -19,69 +24,74 @@ class CryptoProvider extends ChangeNotifier {
   CoinDetail? get selectedCoin => _selectedCoin;
   List<double>? get chartData => _chartData;
   Map<String, dynamic> get globalData => _globalData;
-  bool get isLoading => _isLoading;
+
+  bool get isLoading => _isLoadingCoins || _isLoadingDetail || _isLoadingGlobal;
+  bool get isChartLoading => _isLoadingChart;
+
   String? get error => _error;
   String get sortOrder => _sortOrder;
 
   Future<void> fetchCoins() async {
-    _setLoading(true);
+    _isLoadingCoins = true;
     _error = null;
+    notifyListeners();
 
     try {
       _coins = await _apiService.getCoins();
       _searchResults = _coins;
-      _setLoading(false);
+      _isLoadingCoins = false;
       notifyListeners();
     } catch (e) {
       _error = e.toString();
-      _setLoading(false);
+      _isLoadingCoins = false;
       notifyListeners();
     }
   }
 
   Future<void> fetchCoinDetail(String coinId) async {
-    _setLoading(true);
+    _isLoadingDetail = true;
     _error = null;
+    notifyListeners();
 
     try {
       _selectedCoin = await _apiService.getCoinDetail(coinId);
-      _chartData = _selectedCoin?.sparkline;
-      _setLoading(false);
+      _isLoadingDetail = false;
       notifyListeners();
     } catch (e) {
       _error = e.toString();
-      _setLoading(false);
+      _isLoadingDetail = false;
       notifyListeners();
     }
   }
 
-  Future<void> fetchCoinChart(String coinId, String days) async {
-    _setLoading(true);
-    _error = null;
+  Future<void> fetchCoinChart(String coinId) async {
+    _isLoadingChart = true;
+    notifyListeners();
 
     try {
-      final chartData = await _apiService.getCoinChart(coinId, days: days);
+      final chartData = await _apiService.getCoinChart(coinId);
       _chartData = chartData.prices;
-      _setLoading(false);
+      _isLoadingChart = false;
       notifyListeners();
     } catch (e) {
       _error = e.toString();
-      _setLoading(false);
+      _isLoadingChart = false;
       notifyListeners();
     }
   }
 
   Future<void> fetchGlobalData() async {
-    _setLoading(true);
+    _isLoadingGlobal = true;
     _error = null;
+    notifyListeners();
 
     try {
       _globalData = await _apiService.getGlobalData();
-      _setLoading(false);
+      _isLoadingGlobal = false;
       notifyListeners();
     } catch (e) {
       _error = e.toString();
-      _setLoading(false);
+      _isLoadingGlobal = false;
       notifyListeners();
     }
   }
@@ -134,10 +144,5 @@ class CryptoProvider extends ChangeNotifier {
         break;
     }
     _searchResults = _coins;
-  }
-
-  void _setLoading(bool loading) {
-    _isLoading = loading;
-    notifyListeners();
   }
 }

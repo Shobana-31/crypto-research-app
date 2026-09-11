@@ -34,7 +34,7 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
           color: isDark ? Colors.white : Colors.black,
         ),
         decoration: InputDecoration(
-          hintText: '🔍 Search coins...',
+          hintText: 'Search coins...',
           hintStyle: TextStyle(
             color: isDark ? Colors.grey[600] : Colors.grey[500],
           ),

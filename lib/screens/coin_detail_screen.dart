@@ -14,25 +14,18 @@ class CoinDetailScreen extends StatefulWidget {
 }
 
 class _CoinDetailScreenState extends State<CoinDetailScreen> {
-  String _selectedTimeframe = '7D';
-  final List<String> _timeframes = ['1D', '7D', '30D', '90D', '1Y'];
-
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<CryptoProvider>().fetchCoinDetail(widget.coinId);
-      context.read<CryptoProvider>().fetchCoinChart(
-            widget.coinId,
-            _getDaysForTimeframe(_selectedTimeframe),
-          );
+      context.read<CryptoProvider>().fetchCoinChart(widget.coinId);
     });
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
       appBar: AppBar(
@@ -90,10 +83,7 @@ class _CoinDetailScreenState extends State<CoinDetailScreen> {
                   ElevatedButton(
                     onPressed: () {
                       provider.fetchCoinDetail(widget.coinId);
-                      provider.fetchCoinChart(
-                        widget.coinId,
-                        _getDaysForTimeframe(_selectedTimeframe),
-                      );
+                      provider.fetchCoinChart(widget.coinId);
                     },
                     child: const Text('Retry'),
                   ),
@@ -207,48 +197,9 @@ class _CoinDetailScreenState extends State<CoinDetailScreen> {
                   height: 250,
                   child: PriceChart(
                     coinId: widget.coinId,
-                    days: _getDaysForTimeframe(_selectedTimeframe),
                   ),
                 ),
-                const SizedBox(height: 8),
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: _timeframes.map((timeframe) {
-                      final isSelected = timeframe == _selectedTimeframe;
-                      return Padding(
-                        padding: const EdgeInsets.only(right: 8),
-                        child: FilterChip(
-                          label: Text(
-                            timeframe,
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: isSelected
-                                  ? FontWeight.bold
-                                  : FontWeight.normal,
-                              color: isSelected ? Colors.blue : theme.hintColor,
-                            ),
-                          ),
-                          selected: isSelected,
-                          onSelected: (_) {
-                            setState(() {
-                              _selectedTimeframe = timeframe;
-                            });
-                            context.read<CryptoProvider>().fetchCoinChart(
-                                  widget.coinId,
-                                  _getDaysForTimeframe(timeframe),
-                                );
-                          },
-                          backgroundColor:
-                              isDark ? Colors.grey[800] : Colors.grey[200],
-                          selectedColor: Colors.blue.withOpacity(0.3),
-                          checkmarkColor: Colors.blue,
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 24),
                 Text(
                   '📊 Statistics',
                   style: theme.textTheme.titleLarge?.copyWith(
@@ -469,23 +420,6 @@ class _CoinDetailScreenState extends State<CoinDetailScreen> {
         ],
       ),
     );
-  }
-
-  String _getDaysForTimeframe(String timeframe) {
-    switch (timeframe) {
-      case '1D':
-        return '1';
-      case '7D':
-        return '7';
-      case '30D':
-        return '30';
-      case '90D':
-        return '90';
-      case '1Y':
-        return '365';
-      default:
-        return '7';
-    }
   }
 
   String _formatLargeNumber(double num) {
